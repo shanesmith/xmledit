@@ -637,7 +637,7 @@ endif
 if !exists("*s:MoveCursor")
 	function s:MoveCursor()
 		let tag = s:GetCurrentTag()
-		return (tag != '') && (match(getline('.'), '</'.tag.'>') > -1) ? "\<cr>\<cr>\<up>" : "\<cr>"
+		return ((tag != '') && (match(getline('.'), '</'.tag.'>') > -1)) ? "\<Cr>\<Esc>ko" : "\<Cr>"
 	endfunction
 endif
 
@@ -683,7 +683,7 @@ if !exists("g:xml_tag_completion_map")
     inoremap <buffer> > <Esc>:call <SID>InsertGt()<Cr>
     " After the closing tag has been added and we press enter, this inserts 2
     " linebreaks and moves our cursor up 1 line.
-    execute "inoremap <buffer> <expr> <cr> \"" . <SID>MoveCursor() . "\""
+    inoremap <silent> <buffer> <Cr> <C-R>=<SID>MoveCursor()<CR>
 else
     execute "inoremap <buffer> " . g:xml_tag_completion_map . " <Esc>:call <SID>InsertGt()<Cr>"
 endif
