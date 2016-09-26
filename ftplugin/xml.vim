@@ -317,8 +317,12 @@ function s:ParseTag( )
     if multi_line || do_append_for_xhtml
         startinsert!
     else
-        execute "normal! l"
-        startinsert
+        if col(".") == col("$") - 1
+            startinsert!
+        else
+            execute "normal! l"
+            startinsert
+        endif
     endif
 endfunction
 endif
@@ -557,12 +561,28 @@ if !exists("*s:InsertGt")
 function s:InsertGt( )
   let save_matchpairs = &matchpairs
   set matchpairs-=<:>
-  execute "normal! a>"
+  
+  " Check if a closing '>' already exists
+  " This is useful while using a plugin like delimitMate
+  " or a inoremap which autocompletes the closing >
+  " otherwise, an excess '>' is added
+  if (getline('.')[col('.')] == '<')
+    " Nest the tags
+    execute "normal! li>"
+  elseif (getline('.')[col('.')] == '>')
+    " closing > exists
+    execute "normal! la"
+  else
+    " insert closing >
+    execute "normal! a>"
+  endif
+
   execute "set matchpairs=" . save_matchpairs
   " When the current char is text within a tag it will not proccess as a
   " syntax'ed element and return nothing below. Since the multi line wrap
   " feture relies on using the '>' char as text within a tag we must use the
   " char prior to establish if it is valid html/xml
+  "
   if (getline('.')[col('.') - 1] == '>')
     let char_syn=synIDattr(synID(line("."), col(".") - 1, 1), "name")
   endif
