@@ -578,11 +578,14 @@ function s:InsertGt( )
   endif
 
   execute "set matchpairs=" . save_matchpairs
+
+  " Compatibility with html5 plugin indenting...
+  redraw
+
   " When the current char is text within a tag it will not proccess as a
   " syntax'ed element and return nothing below. Since the multi line wrap
   " feture relies on using the '>' char as text within a tag we must use the
   " char prior to establish if it is valid html/xml
-  "
   if (getline('.')[col('.') - 1] == '>')
     let char_syn=synIDattr(synID(line("."), col(".") - 1, 1), "name")
   endif
