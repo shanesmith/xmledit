@@ -652,7 +652,7 @@ endif
 if !exists("*s:GetCurrentTag")
 	function s:GetCurrentTag()
 		return matchstr(matchstr(getline('.'),
-		\ '<\zs\(\w\|=\| \|''\|"\)*>\%'.col('.').'c'), '^\a*')
+		\ '<\zs[^<>]*>\%'.col('.').'c'), '^\%([[:alpha:]_:]\|[^\x00-\x7F]\)\%([-._:[:alnum:]]\|[^\x00-\x7F]\)*')
 	endfunction
 endif
 
