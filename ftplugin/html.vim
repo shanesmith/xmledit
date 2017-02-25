@@ -51,4 +51,4 @@ if !exists("*HtmlAttribCallback")
 endif
 
 " On to loading xml.vim
-runtime ftplugin/xml.vim
+runtime! ftplugin/xml.vim
