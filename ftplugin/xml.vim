@@ -703,7 +703,7 @@ endif
 " Parse the tag after pressing the close '>'.
 if !exists("g:xml_tag_completion_map")
     " inoremap <buffer> > ><Esc>:call <SID>ParseTag()<Cr>
-    inoremap <buffer> > <Esc>:call <SID>InsertGt()<Cr>
+    inoremap <silent> <buffer> > <Esc>:call <SID>InsertGt()<Cr>
     " After the closing tag has been added and we press enter, this inserts 2
     " linebreaks and moves our cursor up 1 line.
     inoremap <silent> <buffer> <Cr> <C-R>=<SID>MoveCursor()<CR>
