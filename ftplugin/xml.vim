@@ -669,54 +669,47 @@ endif
 setlocal matchpairs+=<:>
 setlocal commentstring=<!--%s-->
 
-" Have this as an escape incase you want a literal '>' not to run the
-" ParseTag function.
-if !exists("g:xml_tag_completion_map")
-    inoremap <buffer> <LocalLeader>. >
-    inoremap <buffer> <LocalLeader>> >
-else
-    execute "inoremap <buffer> <LocalLeader>. " . g:xml_tag_completion_map
-    execute "inoremap <buffer> <LocalLeader>> " . g:xml_tag_completion_map
+if !exists("g:xml_no_tag_map")
+  " Jump between the beggining and end tags.
+  nnoremap <buffer> <LocalLeader>5 :call <SID>TagMatch1()<Cr>
+  nnoremap <buffer> <LocalLeader>% :call <SID>TagMatch1()<Cr>
+  vnoremap <buffer> <LocalLeader>5 <Esc>:call <SID>VisualTag()<Cr>
+  vnoremap <buffer> <LocalLeader>% <Esc>:call <SID>VisualTag()<Cr>
+
+  " Wrap selection in XML tag
+  vnoremap <buffer> <LocalLeader>x "xx:call <SID>WrapTag(@x)<Cr>
+  nnoremap <buffer> <LocalLeader>d :call <SID>DeleteTag()<Cr>
 endif
 
-" Jump between the beggining and end tags.
-nnoremap <buffer> <LocalLeader>5 :call <SID>TagMatch1()<Cr>
-nnoremap <buffer> <LocalLeader>% :call <SID>TagMatch1()<Cr>
-vnoremap <buffer> <LocalLeader>5 <Esc>:call <SID>VisualTag()<Cr>
-vnoremap <buffer> <LocalLeader>% <Esc>:call <SID>VisualTag()<Cr>
-
-" Wrap selection in XML tag
-vnoremap <buffer> <LocalLeader>x "xx:call <SID>WrapTag(@x)<Cr>
-nnoremap <buffer> <LocalLeader>d :call <SID>DeleteTag()<Cr>
-
-" Comment selection
 vnoremap <buffer> <Plug>(XMLEditWrapComment) <Esc>:call <SID>IncreaseCommentLevel()<CR>
 vnoremap <buffer> <Plug>(XMLEditUnwrapComment) <Esc>:call <SID>DecreaseCommentLevel()<CR>
-" The LocalLeader mappings might conflict. Don't map if a binding exists.
-if !exists("g:xml_no_comment_map") && empty(maparg("<LocalLeader>c", "v"))
-    vmap <buffer> <LocalLeader>c <Plug>(XMLEditWrapComment)
-endif
-if !exists("g:xml_no_comment_map") && empty(maparg("<LocalLeader>u", "v"))
-    vmap <buffer> <LocalLeader>u <Plug>(XMLEditUnwrapComment)
+
+if !exists("g:xml_no_comment_map")
+  " Comment selection
+  " The LocalLeader mappings might conflict. Don't map if a binding exists.
+  vmap <buffer> <LocalLeader>c <Plug>(XMLEditWrapComment)
+  vmap <buffer> <LocalLeader>u <Plug>(XMLEditUnwrapComment)
 endif
 
 " Parse the tag after pressing the close '>'.
-if !exists("g:xml_tag_completion_map")
+if !exists("g:xml_no_completion_map")
     " inoremap <buffer> > ><Esc>:call <SID>ParseTag()<Cr>
     inoremap <silent> <buffer> > <Esc>:call <SID>InsertGt()<Cr>
     " After the closing tag has been added and we press enter, this inserts 2
     " linebreaks and moves our cursor up 1 line.
     inoremap <silent> <buffer> <Cr> <C-R>=<SID>MoveCursor()<CR>
-else
-    execute "inoremap <buffer> " . g:xml_tag_completion_map . " <Esc>:call <SID>InsertGt()<Cr>"
+    inoremap <buffer> <LocalLeader>. >
+    inoremap <buffer> <LocalLeader>> >
 endif
 
-nnoremap <buffer> <LocalLeader><LocalLeader> :call <SID>EditFromJump()<Cr>
-inoremap <buffer> <LocalLeader><LocalLeader> <Esc>:call <SID>EditFromJump()<Cr>
-" Clear out all left over xml_jump_string garbage
-nnoremap <buffer> <LocalLeader>w :call <SID>ClearJumpMarks()<Cr>
-" The syntax files clear out any predefined syntax definitions. Recreate
-" this when ever a xml_jump_string is created. (in ParseTag)
+if !exists("g:xml_no_jump_map")
+  nnoremap <buffer> <LocalLeader><LocalLeader> :call <SID>EditFromJump()<Cr>
+  inoremap <buffer> <LocalLeader><LocalLeader> <Esc>:call <SID>EditFromJump()<Cr>
+  " Clear out all left over xml_jump_string garbage
+  nnoremap <buffer> <LocalLeader>w :call <SID>ClearJumpMarks()<Cr>
+  " The syntax files clear out any predefined syntax definitions. Recreate
+  " this when ever a xml_jump_string is created. (in ParseTag)
+endif
 
 augroup xml
     au!
